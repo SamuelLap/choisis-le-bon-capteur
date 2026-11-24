@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choisis le bon capteur</title>
+<meta name="theme-color" content="#163f6b">
+<meta name="description" content="Jeu pédagogique : choisir et brancher le bon capteur industriel.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#163f6b; --navy-2:#0f2e50; --ink:#14212f; --muted:#5b6876; --line:#d7dee6;
+  --bg:#eef2f6; --card:#fff; --accent:#ef7d1a;
+  --vert:#1f9d55; --vert-bg:#e6f6ec; --jaune:#d99a00; --jaune-bg:#fff6dc; --rouge:#d63b3b; --rouge-bg:#fdeaea;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Barlow",system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:16px;line-height:1.4}
+button{font:inherit;color:inherit;cursor:pointer}
+h1,h2,h3{font-family:"Barlow Condensed","Barlow",sans-serif;margin:0;letter-spacing:.01em}
+
+header{background:linear-gradient(180deg,var(--navy),var(--navy-2));color:#fff;padding:14px 20px 0}
+.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;max-width:1280px;margin:0 auto}
+.top h1{font-size:30px;font-weight:800;text-transform:uppercase}
+.top p{margin:0;opacity:.85;font-size:15px}
+.titre{flex:1;min-width:260px}
+.tabs{display:flex;gap:4px;max-width:1280px;margin:12px auto 0}
+.tab{background:transparent;border:0;color:#cfe0f3;padding:10px 18px;border-radius:10px 10px 0 0;font-weight:600;font-size:16px}
+.tab[aria-selected="true"]{background:var(--bg);color:var(--navy)}
+.tab:hover:not([aria-selected="true"]){background:rgba(255,255,255,.08)}
+
+main{max-width:1280px;margin:0 auto;padding:18px 20px 40px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:20px;align-items:start}
+@media (max-width:980px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-bottom:16px}
+.etape{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:700;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:17px}
+.etape h2{font-size:21px;color:var(--navy)}
+.etape .aide{color:var(--muted);font-size:14px}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.tile{background:#f7f9fb;border:2px solid var(--line);border-radius:12px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;font-size:14px;font-weight:500;transition:transform .1s,border-color .1s}
+.tile .em{font-size:30px;line-height:1.1}
+.tile:hover{border-color:#9db4cc;transform:translateY(-1px)}
+.tile[aria-pressed="true"]{border-color:var(--accent);background:#fff4ea;box-shadow:0 0 0 3px rgba(239,125,26,.18)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:2px solid var(--line);background:#f7f9fb;border-radius:999px;padding:6px 13px;font-weight:600;font-size:15px}
+.chip:hover{border-color:#9db4cc}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:#fff4ea;color:#9a4a00}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:560px){.duo{grid-template-columns:1fr}}
+
+.capteurs{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.cap{position:relative;background:#f7f9fb;border:2px solid var(--line);border-radius:12px;padding:6px 8px 8px;text-align:center;font-weight:600;font-size:15px}
+.cap svg{width:100%;height:58px;display:block}
+.cap:hover{border-color:#9db4cc}
+.cap[aria-pressed="true"]{border-color:var(--accent);background:#fff4ea;box-shadow:0 0 0 3px rgba(239,125,26,.18)}
+.cap .fiche{position:absolute;top:4px;right:4px;font-size:11px;font-weight:700;background:var(--navy);color:#fff;border:0;border-radius:6px;padding:2px 6px}
+.cap .fiche:hover{background:var(--accent)}
+
+.go{width:100%;border:0;border-radius:12px;padding:14px;font-size:20px;font-weight:700;font-family:"Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.04em;text-transform:uppercase;background:var(--accent);color:#fff;box-shadow:0 3px 0 #b85a07}
+.go:disabled{background:#c5ccd4;box-shadow:0 3px 0 #a7b0ba;cursor:not-allowed}
+.go:not(:disabled):active{transform:translateY(2px);box-shadow:0 1px 0 #b85a07}
+.lien{background:none;border:0;color:var(--navy);text-decoration:underline;padding:0;font-weight:600}
+
+/* Colonne droite */
+.droite{position:sticky;top:14px}
+@media (max-width:980px){.droite{position:static}}
+.banc{background:#1c2733;border-radius:var(--r);padding:12px;display:flex;gap:12px;align-items:stretch}
+.banc svg.scene{flex:1;min-width:0;background:linear-gradient(#2b3a4a,#223040);border-radius:10px;display:block;width:100%;height:auto}
+.tour{flex:none;width:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.lampe{width:34px;height:34px;border-radius:7px;border:2px solid #0b1118;opacity:.28;transition:opacity .2s, box-shadow .2s}
+.lampe.r{background:#e53935}.lampe.j{background:#ffb300}.lampe.v{background:#2ecc71}
+.lampe.on{opacity:1}
+.lampe.r.on{box-shadow:0 0 18px 4px rgba(229,57,53,.75)}
+.lampe.j.on{box-shadow:0 0 18px 4px rgba(255,179,0,.75);animation:clign 1s steps(2) infinite}
+.lampe.v.on{box-shadow:0 0 18px 4px rgba(46,204,113,.8)}
+.tour .pied{width:10px;height:26px;background:#56616d;border-radius:2px}
+.tour .base{width:30px;height:8px;background:#56616d;border-radius:3px}
+@keyframes clign{50%{opacity:.45}}
+.compteur{color:#9fb3c8;font-size:13px;text-align:center;margin-top:8px;font-family:"Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.05em}
+.compteur b{color:#fff;font-size:18px}
+
+.resultat{margin-top:14px;border-radius:var(--r);border:2px solid var(--line);background:#fff;padding:16px 18px}
+.resultat.vide{color:var(--muted);text-align:center;border-style:dashed}
+.resultat.vert{border-color:var(--vert);background:var(--vert-bg)}
+.resultat.jaune{border-color:var(--jaune);background:var(--jaune-bg)}
+.resultat.rouge{border-color:var(--rouge);background:var(--rouge-bg)}
+.resultat h3{font-size:25px;display:flex;align-items:center;gap:8px}
+.resultat.vert h3{color:#13703c}.resultat.jaune h3{color:#8a6100}.resultat.rouge h3{color:#a32121}
+.resultat .sous{font-weight:600;margin:4px 0 8px}
+.resultat ul{margin:6px 0 4px;padding-left:20px}
+.resultat li{margin:4px 0}
+.resultat .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.btn{border:2px solid var(--navy);background:#fff;color:var(--navy);border-radius:10px;padding:7px 12px;font-weight:700}
+.btn:hover{background:var(--navy);color:#fff}
+.btn.plein{background:var(--navy);color:#fff}
+.btn.plein:hover{background:var(--navy-2)}
+.moins-cher{margin-top:10px;padding:9px 12px;background:#fff;border-radius:10px;border-left:5px solid var(--jaune)}
+.reco{margin-top:10px;padding:10px 12px;background:#fff;border-radius:10px;border-left:5px solid var(--vert)}
+.compare{margin-top:12px}
+.compare table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border-radius:10px;overflow:hidden}
+.compare td{padding:6px 8px;border-top:1px solid var(--line);vertical-align:top}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.dot.vert{background:var(--vert)}.dot.jaune{background:var(--jaune)}.dot.rouge{background:var(--rouge)}
+
+/* Missions */
+.mission{border-left:6px solid var(--accent)}
+.mission .entete{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.mission .prog{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+.mission h2{font-size:26px;color:var(--navy)}
+.mission p{font-size:17px;margin:8px 0 10px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{background:#eef3f8;border:1px solid var(--line);border-radius:8px;padding:4px 9px;font-size:14px;font-weight:600}
+.pts{display:flex;gap:4px;flex-wrap:wrap}
+.pt{width:14px;height:14px;border-radius:4px;background:#d9e0e7}
+.pt.vert{background:var(--vert)}.pt.jaune{background:var(--jaune)}.pt.rouge{background:var(--rouge)}.pt.cur{outline:2px solid var(--accent);outline-offset:1px}
+.bilan{text-align:center}
+.bilan .gros{font-size:56px;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:800;color:var(--navy)}
+
+/* Scène */
+.led{transition:fill .2s}
+.led.on{fill:#ffb020;filter:url(#glow)}
+.led.blink{animation:ledb .5s steps(2) infinite}
+@keyframes ledb{50%{fill:#5a4a2a}}
+.secoue{animation:sec .45s ease-in-out 2}
+@keyframes sec{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.apparait{animation:app .35s ease-out}
+@keyframes app{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.faisceau{stroke-dasharray:8 6;animation:fx .6s linear infinite}
+@keyframes fx{to{stroke-dashoffset:-14}}
+.onde{animation:onde 1.2s ease-out infinite}
+@keyframes onde{from{opacity:1}to{opacity:.15}}
+
+/* Fenêtre fiche */
+.voile{position:fixed;inset:0;background:rgba(10,20,32,.72);display:none;align-items:flex-start;justify-content:center;padding:20px;z-index:50;overflow:auto}
+.voile.ouvert{display:flex}
+.fenetre{background:#fff;border-radius:16px;max-width:760px;width:100%;padding:12px;position:relative}
+.fenetre img{width:100%;height:auto;display:block;border-radius:10px}
+.fermer{position:sticky;top:0;float:right;border:0;background:var(--navy);color:#fff;border-radius:10px;padding:6px 12px;font-weight:700;z-index:2}
+.galerie{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:40px}
+.galerie button{border:2px solid var(--line);border-radius:10px;background:#fff;padding:4px;font-weight:600;font-size:14px}
+.galerie button:hover{border-color:var(--accent)}
+.galerie img{border-radius:6px;aspect-ratio:3/3.6;object-fit:cover;object-position:top}
+footer{max-width:1280px;margin:0 auto;padding:0 20px 24px;color:var(--muted);font-size:13px}
+.cache{display:none!important}
+.installer{border:2px solid #fff;background:transparent;color:#fff;border-radius:10px;padding:8px 14px;font-weight:700}
+.installer:hover{background:#fff;color:var(--navy)}
+/* Branchement */
+.board{flex:1;min-width:0;position:relative;background:linear-gradient(#2b3a4a,#223040);border-radius:10px;padding:12px 14px 16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:clamp(50px,10vw,110px);color:#e8eef5;align-content:start}
+.b-gauche,.b-droite{display:flex;flex-direction:column;gap:6px;position:relative;z-index:1}
+.b-titre{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:14px;letter-spacing:.05em;text-transform:uppercase;color:#9fb3c8;margin-top:6px}
+.b-fil{display:flex;align-items:center;gap:8px;background:#34475b;border:2px solid #4c6177;border-radius:9px;padding:7px 9px;color:#fff;font-weight:700;font-size:15px;text-align:left}
+.b-fil:hover{border-color:#8fb0d0}
+.b-fil.sel{border-color:var(--accent);box-shadow:0 0 0 3px rgba(239,125,26,.35);background:#45576b}
+.b-pin{flex:none;width:18px;height:18px;border-radius:50%;border:2px solid #0b1118}
+.b-dest{margin-left:auto;font-weight:500;font-size:13px;color:#ffd27a}
+.borne{position:relative;display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:6px;background:#dfe6ee;border:2px solid #9aa9b8;border-radius:8px;padding:6px 9px;text-align:left;color:#14212f}
+.borne .bl{font-weight:800;font-size:16px;min-width:46px}
+.borne .bs{font-size:12px;color:#4a5866}
+.borne:hover{border-color:var(--accent)}
+.b-plus{border-left:8px solid #e53935}.b-moins{border-left:8px solid #1f5fbf}.b-in{border-left:8px solid #2ecc71}.b-ai{border-left:8px solid #a259ff}
+.b-iso{background:transparent;border-style:dashed;color:#cfdbe7}.b-iso .bs{color:#9fb3c8}
+.b-led{width:16px;height:16px;border-radius:50%;background:#3d3420;border:2px solid #222}
+.b-led.on{background:#ffb020;box-shadow:0 0 12px 3px rgba(255,176,32,.85)}
+.b-bar{width:40px;height:9px;background:#b9c4cf;border-radius:5px;overflow:hidden}.b-bar i{display:block;height:100%;background:#a259ff;transition:width .3s}
+.b-ma{font-size:12px;font-weight:700;min-width:44px;text-align:right}
+.b-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.aide-p{font-size:14px;color:var(--muted);margin:8px 0 0}
+.sim{margin-top:10px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.brancher{margin-top:4px}
+.symb{width:46px;height:17px;vertical-align:-4px;margin-left:8px;color:#ffd27a}
+.b-aide{font-size:12.5px;color:#cfdbe7;margin:-2px 0 2px;line-height:1.3}
+.b-aide b{color:#ffd27a}
+.contacts-expl{display:grid;gap:8px;margin-top:10px}
+.contacts-expl>div{background:#f2f6fa;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px}
+.symb-g .symb{color:var(--navy);margin:0 8px 0 0;width:54px;height:20px}
+@media (max-width:620px){
+  .banc{flex-direction:column}
+  .tour{flex-direction:row;width:auto;justify-content:center}
+  .tour .pied,.tour .base{display:none}
+  .board{column-gap:34px;padding:10px}
+  .borne{grid-template-columns:auto 1fr auto;padding:6px}
+  .borne .bs,.b-ma,.b-bar{display:none}
+  .b-fil{font-size:14px;padding:6px}
+  .b-dest{display:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="titre">
+      <h1>Choisis le bon capteur</h1>
+      <p>Session 1 : choisir le bon capteur · Session 2 : le brancher correctement</p>
+    </div>
+    <button class="installer" id="bInstall" hidden>📲 Installer l'application</button>
+  </div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-labo" aria-selected="true">🔬 Labo libre</button>
+    <button class="tab" role="tab" id="tab-missions" aria-selected="false">🏭 Missions</button>
+    <button class="tab" role="tab" id="tab-branch" aria-selected="false">🔌 Branchement</button>
+    <button class="tab" id="tab-fiches" aria-selected="false">📚 Les 9 fiches</button>
+  </div>
+</header>
+
+<main>
+  <section id="gauche">
+    <!-- LABO -->
+    <div id="vue-labo">
+      <div class="card">
+        <div class="etape"><span class="num">1</span><h2>Quel objet veux-tu détecter ?</h2></div>
+        <div class="tiles" id="choix-mat"></div>
+      </div>
+      <div class="card">
+        <div class="etape"><span class="num">2</span><h2>À quelle distance ?</h2>
+          <span class="aide">Du boîtier du capteur jusqu'à l'objet (ou largeur à couvrir pour un faisceau)</span></div>
+        <p class="aide-p" style="margin:-2px 0 10px">« Contact » : l'objet touche le capteur. Pour un fin de course, l'objet entre en contact avec le <b>bras</b> ou la <b>tige à ressort</b>, qui active l'interrupteur dans le <b>boîtier</b>. Le bras peut mesurer jusqu'à 6 po (15 cm) : le boîtier peut donc être plus loin de l'objet.</p>
+        <div class="chips" id="choix-dist"></div>
+      </div>
+      <div class="card duo">
+        <div>
+          <div class="etape"><span class="num">3</span><h2>Environnement</h2></div>
+          <div class="chips" id="choix-env"></div>
+        </div>
+        <div>
+          <div class="etape"><span class="num">4</span><h2>Besoin</h2></div>
+          <div class="chips" id="choix-besoin"></div>
+        </div>
+      </div>
+      <div style="text-align:right;margin:-6px 0 12px"><button class="lien" id="hasard">🎲 Situation au hasard</button></div>
+    </div>
+
+    <!-- MISSIONS -->
+    <div id="vue-missions" class="cache">
+      <div class="card mission" id="carte-mission"></div>
+    </div>
+
+    <!-- BRANCHEMENT -->
+    <div id="vue-branch" class="cache">
+      <div class="chips" id="br-sous" style="margin-bottom:12px"></div>
+      <div class="card mission" id="br-carte-mission"></div>
+      <div class="card" id="br-libre">
+        <div class="etape"><span class="num">1</span><h2>Quel capteur brancher?</h2></div>
+        <div class="capteurs" id="br-caps"></div>
+        <div class="etape" style="margin-top:14px"><span class="num">2</span><h2>Carte d'entrées de l'automate</h2></div>
+        <div class="chips" id="br-cartes"></div>
+        <div class="etape" style="margin-top:14px"><span class="num">3</span><h2>Ce que l'automate doit savoir</h2></div>
+        <div class="chips" id="br-logiques"></div>
+      </div>
+      <div class="card">
+        <div class="etape"><span class="num">⚙</span><h2>Type de sortie du capteur</h2></div>
+        <div id="br-sortie"></div>
+      </div>
+      <div class="card">
+        <div class="etape"><span class="num">🔌</span><h2>Branche les fils sur le banc</h2></div>
+        <p class="aide-p" style="margin-top:0">1. Clique sur un fil du capteur. 2. Clique sur la borne où il doit aller. Un fil inutilisé va sur <b>Isolé</b>. Les couleurs et les fonctions des fils sont dans la fiche du capteur.</p>
+        <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn" id="br-fiche">📄 Fiche</button><button class="btn" id="br-reset">↺ Tout débrancher</button></div>
+      </div>
+    </div>
+
+    <div class="card" id="carte-capteurs">
+      <div class="etape"><span class="num" id="num-capteur">5</span><h2>Choisis ton capteur</h2></div>
+      <div class="capteurs" id="choix-cap"></div>
+    </div>
+    <button class="go" id="tester" disabled>⚡ Tester la détection</button>
+  </section>
+
+  <section class="droite" aria-label="Banc d'essai">
+    <div class="banc">
+      <svg class="scene" id="scene" viewBox="0 0 640 300" role="img" aria-label="Banc d'essai du capteur"></svg>
+      <div class="board cache" id="board"></div>
+      <div class="tour" aria-hidden="true">
+        <div class="lampe r" id="lr"></div><div class="lampe j" id="lj"></div><div class="lampe v" id="lv"></div>
+        <div class="pied"></div><div class="base"></div>
+      </div>
+    </div>
+    <div class="compteur" id="compteur">PIÈCES DÉTECTÉES : <b id="nb">0</b></div>
+    <div class="resultat vide" id="resultat" aria-live="polite">Fais tes choix, puis appuie sur <b>Tester la détection</b>.</div>
+  </section>
+</main>
+<footer>Données tirées des fiches 1 à 9 des capteurs industriels. Les portées sont des valeurs typiques : vérifie toujours la fiche technique du fabricant.</footer>
+
+<div class="voile" id="voile" role="dialog" aria-modal="true">
+  <div class="fenetre"><button class="fermer" id="fermer">✕ Fermer</button><div id="contenu-voile"></div></div>
+</div>
+
+<script src="moteur.js"></script>
+<script src="branchement.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const etat = { mode: "labo", mat: null, dist: null, env: "propre", besoin: "presence", cap: null, nb: 0 };
+const mis = { ordre: [], i: 0, resultats: [], essaye: false };
+const capParId = Object.fromEntries(CAPTEURS.map(c => [c.id, c]));
+const matParId = Object.fromEntries(MATERIAUX.map(m => [m.id, m]));
+
+/* ---------- Dessins SVG ---------- */
+const DEFS = `<defs>
+ <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6ebf0"/><stop offset=".45" stop-color="#a9b3bd"/><stop offset="1" stop-color="#6d7781"/></linearGradient>
+ <linearGradient id="bleu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b7fd9"/><stop offset="1" stop-color="#1d4f99"/></linearGradient>
+ <filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>`;
+
+function led(x, y, on, blink) { return `<circle class="led ${on ? "on" : ""} ${blink ? "blink" : ""}" cx="${x}" cy="${y}" r="5" fill="#4a3f30" stroke="#111" stroke-width="1"/>`; }
+
+// Capteur cylindrique (face à x=0, orienté vers la droite)
+function cyl(face, ledOn, blink) {
+  let t = `<path d="M-84 0 C-100 0 -104 14 -122 16" stroke="#1b1b1b" stroke-width="7" fill="none"/>`;
+  t += `<rect x="-86" y="-15" width="80" height="30" rx="3" fill="url(#metal)" stroke="#4d5661"/>`;
+  for (let i = -80; i < -10; i += 6) t += `<line x1="${i}" y1="-15" x2="${i + 3}" y2="15" stroke="#7c8792" stroke-width="1"/>`;
+  t += `<rect x="-34" y="-19" width="11" height="38" rx="2" fill="#b7c0c9" stroke="#4d5661"/><rect x="-74" y="-19" width="11" height="38" rx="2" fill="#b7c0c9" stroke="#4d5661"/>`;
+  t += `<rect x="-8" y="-13" width="9" height="26" rx="3" fill="${face}" stroke="#222"/>`;
+  t += led(-90, -10, ledOn, blink);
+  return t;
+}
+// Boîtier rectangulaire
+function boite(ledOn, blink, lentille = "#5a1212", corps = "url(#bleu)") {
+  return `<path d="M-35 28 L-35 62" stroke="#1b1b1b" stroke-width="7"/>
+  <rect x="-70" y="-28" width="70" height="56" rx="7" fill="${corps}" stroke="#0e2747"/>
+  <rect x="-9" y="-18" width="9" height="36" rx="2" fill="${lentille}" stroke="#111"/>
+  <circle cx="-4" cy="0" r="7" fill="${lentille}" stroke="#2a0000"/>
+  ${led(-58, -16, ledOn, blink)}`;
+}
+function reflecteur() {
+  let t = `<rect x="-3" y="20" width="6" height="42" fill="#555"/><rect x="-14" y="-30" width="28" height="56" rx="3" fill="#c81e1e" stroke="#5a0000"/>`;
+  for (let y = -24; y < 22; y += 8) for (let x = -10; x < 12; x += 8) t += `<polygon points="${x},${y + 4} ${x + 4},${y} ${x + 8},${y + 4} ${x + 4},${y + 8}" fill="#ff5a5a" opacity=".7"/>`;
+  return t;
+}
+function finCourse(ledOn, appuye) {
+  const ang = appuye ? 0 : -28;
+  return `<path d="M-40 34 L-40 62" stroke="#1b1b1b" stroke-width="7"/>
+  <rect x="-80" y="-24" width="64" height="58" rx="5" fill="#2f3b48" stroke="#0b1118"/>
+  <rect x="-24" y="-12" width="14" height="24" rx="3" fill="#8b96a2" stroke="#222"/>
+  <g transform="translate(-14,0) rotate(${ang})">
+    <rect x="0" y="-4" width="62" height="8" rx="3" fill="#b7c0c9" stroke="#3d4650"/>
+    <circle cx="68" cy="0" r="12" fill="#151515" stroke="#555" stroke-width="2"/>
+  </g>
+  ${led(-68, -12, ledOn, false)}`;
+}
+function magnetique(ledOn, blink) {
+  return `<path d="M-42 0 C-60 0 -64 12 -82 14" stroke="#1b1b1b" stroke-width="5" fill="none"/>
+  <rect x="-44" y="-9" width="44" height="18" rx="4" fill="#202428" stroke="#000"/>
+  <rect x="-6" y="-9" width="6" height="18" fill="#444"/>${led(-32, -12, ledOn, blink)}`;
+}
+
+function dessinCapteur(id, ledOn, blink, appuye) {
+  switch (id) {
+    case "inductif": return cyl("#2d6fd6", ledOn, blink);
+    case "capacitif": return cyl("#1c3d6e", ledOn, blink);
+    case "ultrason": return cyl("#8c949c", ledOn, blink);
+    case "magnetique": return magnetique(ledOn, blink);
+    case "findecourse": return finCourse(ledOn, appuye);
+    case "laser": return boite(ledOn, blink, "#3b0a0a", "#2a3644");
+    default: return boite(ledOn, blink);
+  }
+}
+
+function icone(id) {
+  if (id === "barrage") return `<svg viewBox="0 0 150 70">${DEFS}<g transform="translate(58,30) scale(.62)">${boite(false)}</g><line x1="62" y1="30" x2="92" y2="30" stroke="#e53935" stroke-width="3" stroke-dasharray="5 4"/><g transform="translate(96,30) scale(-.62,.62)">${boite(false)}</g></svg>`;
+  if (id === "reflex") return `<svg viewBox="0 0 150 70">${DEFS}<g transform="translate(62,30) scale(.62)">${boite(false)}</g><line x1="66" y1="27" x2="104" y2="27" stroke="#e53935" stroke-width="2.5"/><line x1="104" y1="33" x2="66" y2="33" stroke="#e53935" stroke-width="2.5" stroke-dasharray="4 3"/><g transform="translate(114,30) scale(.62)">${reflecteur()}</g></svg>`;
+  const tx = { findecourse: 108, magnetique: 108, diffus: 104, laser: 104 }[id] || 118;
+  const sc = id === "magnetique" ? 1 : .62;
+  let extra = "";
+  if (id === "diffus") extra = `<line x1="108" y1="28" x2="140" y2="28" stroke="#e53935" stroke-width="2.5"/><line x1="140" y1="33" x2="108" y2="33" stroke="#e53935" stroke-width="2.5" stroke-dasharray="4 3"/>`;
+  if (id === "laser") extra = `<line x1="108" y1="30" x2="142" y2="30" stroke="#ff2a2a" stroke-width="1.5"/><circle cx="142" cy="30" r="3" fill="#ff2a2a"/>`;
+  if (id === "ultrason") extra = [0, 1, 2].map(i => `<path d="M${124 + i * 8} 20 Q${132 + i * 8} 30 ${124 + i * 8} 40" stroke="#6fb7ff" stroke-width="2" fill="none"/>`).join("");
+  if (id === "inductif" || id === "capacitif") extra = [0, 1].map(i => `<path d="M${123 + i * 7} 22 Q${130 + i * 7} 30 ${123 + i * 7} 38" stroke="#6fb7ff" stroke-width="2" fill="none"/>`).join("");
+  return `<svg viewBox="0 0 150 70">${DEFS}<g transform="translate(${tx},30) scale(${sc})">${dessinCapteur(id, false)}</g>${extra}</svg>`;
+}
+
+/* Scène du banc d'essai */
+function scene(verdict) {
+  const s = { mat: etat.mat, dist: etat.dist, env: etat.env };
+  const id = etat.cap;
+  const mat = s.mat ? matParId[s.mat] : null;
+  const objet = (etat.mode === "missions" && MISSIONS[mis.ordre[mis.i]] && MISSIONS[mis.ordre[mis.i]].objet) || (mat ? mat.emoji : "❔");
+  const Y = 170, FACE = 210, OBJ = 330;
+  const actif = verdict === "vert" || verdict === "jaune";
+  const blink = verdict === "jaune";
+  const coul = { vert: "#2ecc71", jaune: "#ffb300", rouge: "#ff5252" }[verdict] || "#7aa6cf";
+  let g = DEFS;
+
+  // Convoyeur
+  g += `<rect x="0" y="212" width="640" height="88" fill="#1a2430"/><rect x="40" y="206" width="560" height="10" rx="5" fill="#3d4a58"/>`;
+  for (let x = 52; x < 600; x += 34) g += `<circle cx="${x}" cy="211" r="6" fill="#5d6b7a" stroke="#2a3440"/>`;
+  if (s.env === "poussiere") for (let i = 0; i < 40; i++) g += `<circle cx="${(i * 97) % 620 + 10}" cy="${(i * 53) % 190 + 10}" r="${1 + (i % 3)}" fill="#d8c7a0" opacity=".35"/>`;
+  if (s.env === "huile") for (let i = 0; i < 16; i++) g += `<path d="M${(i * 41) % 600 + 20} ${(i * 29) % 150 + 20} q3 6 0 9 q-3 -3 0 -9" fill="#6ec1ff" opacity=".5"/>`;
+  if (s.env === "vapeur") for (let i = 0; i < 6; i++) g += `<ellipse cx="${90 + i * 95}" cy="${60 + (i % 2) * 40}" rx="70" ry="22" fill="#fff" opacity=".09"/>`;
+
+  // Halo et objet
+  if (verdict) g += `<circle class="apparait" cx="${OBJ}" cy="${Y}" r="54" fill="${coul}" opacity=".16" stroke="${coul}" stroke-width="3"/>`;
+  g += `<g class="${verdict === "rouge" ? "secoue" : ""}"><text x="${OBJ}" y="${Y + 25}" text-anchor="middle" font-size="72">${objet}</text></g>`;
+
+  const bord = OBJ - 36;
+  if (id) {
+    const fil = actif ? coul : "#ff4d4d";
+    const op = verdict ? (actif ? 1 : .55) : .35;
+    if (id === "barrage") {
+      const RX = 470;
+      const fin = actif ? bord : RX;
+      g += `<line class="faisceau" x1="${FACE}" y1="${Y}" x2="${fin}" y2="${Y}" stroke="#ff3b3b" stroke-width="4" opacity="${op}"/>`;
+      g += `<g transform="translate(${FACE},${Y})">${boite(false)}</g>`;
+      g += `<g transform="translate(${RX},${Y}) scale(-1,1)">${boite(actif, blink)}</g>`;
+      g += `<text x="${RX + 35}" y="${Y - 40}" fill="#9fb3c8" font-size="12" text-anchor="middle">récepteur</text><text x="${FACE - 35}" y="${Y - 40}" fill="#9fb3c8" font-size="12" text-anchor="middle">émetteur</text>`;
+      g += cote(FACE, RX, "Largeur");
+    } else if (id === "reflex") {
+      const RX = 480;
+      if (actif) g += `<line class="faisceau" x1="${FACE}" y1="${Y - 6}" x2="${bord}" y2="${Y - 6}" stroke="#ff3b3b" stroke-width="4"/>`;
+      else g += `<line class="faisceau" x1="${FACE}" y1="${Y - 6}" x2="${RX - 14}" y2="${Y - 6}" stroke="#ff3b3b" stroke-width="4" opacity="${op}"/><line class="faisceau" x1="${RX - 14}" y1="${Y + 6}" x2="${FACE}" y2="${Y + 6}" stroke="#ff3b3b" stroke-width="3" opacity="${op * .8}"/>`;
+      g += `<g transform="translate(${FACE},${Y})">${boite(actif, blink)}</g><g transform="translate(${RX},${Y})">${reflecteur()}</g>`;
+      g += cote(FACE, RX, "Largeur");
+    } else if (id === "diffus" || id === "laser") {
+      const larg = id === "laser" ? 2 : 4;
+      const fin = actif ? bord : (verdict ? bord - 40 : bord);
+      g += `<line class="faisceau" x1="${FACE}" y1="${Y - 6}" x2="${fin}" y2="${Y - 6}" stroke="#ff3b3b" stroke-width="${larg}" opacity="${op}"/>`;
+      if (actif) g += `<line class="faisceau" x1="${bord}" y1="${Y + 6}" x2="${FACE}" y2="${Y + 6}" stroke="#ff3b3b" stroke-width="${larg}" opacity=".8"/>`;
+      if (id === "laser" && actif) g += `<circle cx="${bord}" cy="${Y - 6}" r="5" fill="#ff2a2a" filter="url(#glow)"/>`;
+      g += `<g transform="translate(${FACE},${Y})">${dessinCapteur(id, actif, blink)}</g>`;
+      g += cote(FACE, bord);
+    } else if (id === "ultrason") {
+      const portee = actif ? bord - FACE : (verdict ? (bord - FACE) * .45 : bord - FACE);
+      for (let i = 1; i <= 4; i++) { const x = FACE + portee * i / 4; const h = 10 + i * 9; g += `<path class="${verdict ? "onde" : ""}" style="animation-delay:${i * .15}s" d="M${x - 6} ${Y - h} Q${x + 8} ${Y} ${x - 6} ${Y + h}" stroke="${actif ? coul : "#6fb7ff"}" stroke-width="3" fill="none" opacity="${verdict ? 1 : .45}"/>`; }
+      g += `<g transform="translate(${FACE},${Y})">${dessinCapteur(id, actif, blink)}</g>`;
+      g += cote(FACE, bord);
+    } else if (id === "findecourse") {
+      const px = FACE - 2, py = Y + 4;
+      const trop = etat.dist > 150;
+      const L = trop ? (bord - px) * .5 : bord - px - 11;
+      const ang = actif ? 8 : -16;
+      g += `<path d="M${px - 34} ${py + 30} L${px - 34} ${Y + 50}" stroke="#1b1b1b" stroke-width="7"/>`;
+      g += `<rect x="${px - 66}" y="${py - 28}" width="64" height="58" rx="5" fill="#2f3b48" stroke="#0b1118"/>`;
+      g += `<rect x="${px - 6}" y="${py - 10}" width="10" height="20" rx="2" fill="#8b96a2" stroke="#222"/>`;
+      g += led(px - 54, py - 16, actif, blink);
+      g += `<g transform="translate(${px},${py}) rotate(${ang})"><rect x="0" y="-4" width="${L}" height="8" rx="3" fill="#b7c0c9" stroke="#3d4650"/><circle cx="${L}" cy="0" r="11" fill="#151515" stroke="#555" stroke-width="2"/></g>`;
+      g += `<text x="${px - 34}" y="${py - 36}" fill="#9fb3c8" font-size="12" text-anchor="middle">boîtier (interrupteur)</text>`;
+      g += `<text x="${px + L / 2}" y="${py - 22}" fill="#9fb3c8" font-size="12" text-anchor="middle">bras</text>`;
+      if (actif) g += `<g class="apparait"><circle cx="${bord - 4}" cy="${py + 10}" r="16" fill="none" stroke="#ffd27a" stroke-width="3"/><text x="${bord - 4}" y="${py + 44}" fill="#ffd27a" font-size="13" font-weight="700" text-anchor="middle">CONTACT</text></g>`;
+      g += cote(px, bord);
+    } else {
+      const portee = id === "magnetique" ? 26 : 40;
+      for (let i = 1; i <= 3; i++) { const x = FACE + 6 + i * (portee / 3); const h = 6 + i * 7; g += `<path class="${verdict ? "onde" : ""}" style="animation-delay:${i * .2}s" d="M${x} ${Y - h} Q${x + 10} ${Y} ${x} ${Y + h}" stroke="${actif ? coul : "#6fb7ff"}" stroke-width="2.5" fill="none" opacity="${verdict ? 1 : .5}"/>`; }
+      g += `<g transform="translate(${FACE},${Y})">${dessinCapteur(id, actif, blink)}</g>`;
+      g += cote(FACE, bord);
+    }
+  } else {
+    g += `<text x="140" y="${Y + 5}" fill="#9fb3c8" font-size="15" text-anchor="middle">capteur ?</text>`;
+    g += `<rect x="85" y="${Y - 30}" width="110" height="60" rx="10" fill="none" stroke="#9fb3c8" stroke-dasharray="6 5"/>`;
+  }
+
+  // Étiquette du résultat
+  if (verdict) {
+    const txt = { vert: "✓ DÉTECTÉ", jaune: "⚠ DÉTECTÉ… MAIS", rouge: "✗ AUCUNE DÉTECTION" }[verdict];
+    g += `<g class="apparait"><rect x="${OBJ - 135}" y="36" width="270" height="38" rx="19" fill="${coul}"/><text x="${OBJ}" y="62" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="800" font-size="23" fill="${verdict === "jaune" ? "#2b1d00" : "#fff"}">${txt}</text></g>`;
+  }
+  // Bandeau conditions
+  const env = ENVIRONNEMENTS.find(e => e.id === s.env);
+  g += `<text x="14" y="24" fill="#9fb3c8" font-size="13">${env ? env.emoji + " " + env.label : ""}</text>`;
+  $("#scene").innerHTML = g;
+}
+function cote(x1, x2, prefixe) {
+  const d = etat.dist;
+  if (d === null || d === undefined) return "";
+  const lab = (prefixe ? prefixe + " : " : "") + (d === 0 ? "contact" : fmtDist(d));
+  const y = 262;
+  return `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#ffd27a" stroke-width="2"/>
+  <path d="M${x1} ${y} l8 -5 v10z M${x2} ${y} l-8 -5 v10z" fill="#ffd27a"/>
+  <line x1="${x1}" y1="${y - 12}" x2="${x1}" y2="${y + 12}" stroke="#ffd27a"/><line x1="${x2}" y1="${y - 12}" x2="${x2}" y2="${y + 12}" stroke="#ffd27a"/>
+  <rect x="${(x1 + x2) / 2 - 60}" y="${y + 8}" width="120" height="24" rx="6" fill="#1a2430"/>
+  <text x="${(x1 + x2) / 2}" y="${y + 26}" text-anchor="middle" fill="#ffd27a" font-size="16" font-weight="700">${lab}</text>`;
+}
+
+/* ---------- Interface ---------- */
+function bouton(cls, contenu, presse, onClick, attrs = "") {
+  const b = document.createElement("button");
+  b.className = cls; b.innerHTML = contenu; b.setAttribute("aria-pressed", presse ? "true" : "false");
+  b.addEventListener("click", onClick);
+  return b;
+}
+function rendreChoix() {
+  const cm = $("#choix-mat"); cm.innerHTML = "";
+  MATERIAUX.forEach(m => cm.append(bouton("tile", `<span class="em">${m.emoji}</span>${m.label}`, etat.mat === m.id, () => { etat.mat = m.id; changer(); })));
+  const cd = $("#choix-dist"); cd.innerHTML = "";
+  DISTANCES.forEach(d => cd.append(bouton("chip", d.label, etat.dist === d.v, () => { etat.dist = d.v; changer(); })));
+  const ce = $("#choix-env"); ce.innerHTML = "";
+  ENVIRONNEMENTS.forEach(e => ce.append(bouton("chip", `${e.emoji} ${e.label}`, etat.env === e.id, () => { etat.env = e.id; changer(); })));
+  const cb = $("#choix-besoin"); cb.innerHTML = "";
+  BESOINS.forEach(e => cb.append(bouton("chip", `${e.emoji} ${e.label}`, etat.besoin === e.id, () => { etat.besoin = e.id; changer(); })));
+  rendreCapteurs();
+}
+function rendreCapteurs() {
+  const cc = $("#choix-cap"); cc.innerHTML = "";
+  CAPTEURS.forEach(c => {
+    const b = bouton("cap", `${icone(c.id)}${c.nom}`, etat.cap === c.id, () => { etat.cap = c.id; changer(); });
+    b.title = c.resume;
+    const f = document.createElement("span");
+    f.className = "fiche"; f.textContent = "Fiche " + c.fiche; f.setAttribute("role", "button"); f.tabIndex = 0;
+    const ouvrir = e => { e.stopPropagation(); ouvrirFiche(c.fiche); };
+    f.addEventListener("click", ouvrir); f.addEventListener("keydown", e => { if (e.key === "Enter") ouvrir(e); });
+    b.append(f); cc.append(b);
+  });
+}
+function pret() { return etat.mat && etat.dist !== null && etat.cap; }
+function changer() {
+  if (etat.mode === "labo") rendreChoix(); else rendreCapteurs();
+  $("#tester").disabled = !pret() || (etat.mode === "missions" && mis.fini);
+  lampes(null);
+  scene(null);
+  const r = $("#resultat"); r.className = "resultat vide";
+  r.innerHTML = pret() ? "Prêt! Appuie sur <b>Tester la détection</b>." : "Fais tes choix, puis appuie sur <b>Tester la détection</b>.";
+}
+function lampes(v) {
+  $("#lr").classList.toggle("on", v === "rouge");
+  $("#lj").classList.toggle("on", v === "jaune");
+  $("#lv").classList.toggle("on", v === "vert");
+}
+
+function capFirst(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
+
+function tester() {
+  if (!pret()) return;
+  const s = { mat: etat.mat, dist: etat.dist, env: etat.env, besoin: etat.besoin };
+  const { res, meilleurs } = evaluerTout(s);
+  const r = res.find(x => x.capteur.id === etat.cap);
+  const v = r.verdict;
+  lampes(v); scene(v);
+  if (v === "vert" || v === "jaune") { etat.nb++; $("#nb").textContent = etat.nb; }
+
+  const c = r.capteur;
+  const autres = meilleurs.filter(b => b.capteur.id !== c.id);
+  const nomsBest = meilleurs.map(b => `<b>${b.capteur.nom}</b>`).join(" ou ");
+  let h = "";
+  if (v === "vert") {
+    h += `<h3>✅ Bon choix!</h3><div class="sous">Le capteur ${c.nom.toLowerCase()} détecte bien dans cette situation.</div>`;
+    h += `<div>${c.resume}</div>`;
+    if (r.att.length) h += `<div class="sous" style="margin-top:8px">À surveiller :</div><ul>${r.att.map(a => `<li>${a}</li>`).join("")}</ul>`;
+    if (r.moinsCher) h += `<div class="moins-cher">💲 <b>Bon choix, mais il existe moins cher :</b> ${r.moinsCher.map(b => `<b>${b.capteur.nom}</b> (${"$".repeat(b.capteur.prix)})`).join(" ou ")}, au lieu de ${"$".repeat(c.prix)}. ${c.surdim && etat.besoin === "presence" ? capFirst(c.surdim) + "." : ""}</div>`;
+    else if (autres.length) h += `<div style="margin-top:8px">Autre bon choix possible : ${autres.map(b => `<b>${b.capteur.nom}</b>`).join(", ")}.</div>`;
+  } else if (v === "jaune") {
+    h += `<h3>⚠️ Ça fonctionne, mais ce n'est pas optimal</h3><div class="sous">Pourquoi ce n'est pas le meilleur choix :</div>`;
+    h += `<ul>${r.att.map(a => `<li>${a}</li>`).join("")}${r.notes.map(n => `<li>${capFirst(n)}.</li>`).join("")}</ul>`;
+    h += meilleurs.length
+      ? `<div class="reco cache" id="reco">💡 <b>Recommandation :</b> ${nomsBest}. ${meilleurs.map(b => b.capteur.resume).join(" ")}</div>`
+      : `<div class="reco cache" id="reco">💡 Aucun capteur du montage ne détecte bien cet objet à cette distance. Essaie de changer la distance ou l'emplacement du capteur.</div>`;
+  } else {
+    h += `<h3>❌ Ça ne fonctionne pas</h3><div class="sous">Pourquoi le capteur ${c.nom.toLowerCase()} ne détecte pas :</div>`;
+    h += `<ul>${r.non.map(a => `<li>${a}</li>`).join("")}</ul>`;
+    h += meilleurs.length
+      ? `<div class="reco cache" id="reco">💡 <b>Ce qui fonctionnerait :</b> ${nomsBest}. ${meilleurs.map(b => b.capteur.resume).join(" ")}</div>`
+      : `<div class="reco cache" id="reco">💡 Aucun capteur du montage ne fonctionne dans cette situation. Essaie de changer la distance ou l'emplacement.</div>`;
+  }
+  h += `<div class="actions">`;
+  if (v !== "vert") h += `<button class="btn" id="b-reco">💡 Voir la recommandation</button>`;
+  h += `<button class="btn" data-fiche="${c.fiche}">📄 Fiche ${c.fiche} : ${c.nom}</button>`;
+  h += `<button class="btn" id="b-comp">📊 Comparer les 9 capteurs</button>`;
+  if (v !== "rouge") h += `<button class="btn" id="b-brancher">🔌 Brancher ce capteur</button>`;
+  if (etat.mode === "missions") h += `<button class="btn plein" id="b-suiv">${mis.i + 1 < mis.ordre.length ? "Mission suivante →" : "Voir mon bilan →"}</button>`;
+  h += `</div><div class="compare cache" id="comp"><table>${res.map(x => `<tr><td style="white-space:nowrap"><span class="dot ${x.verdict}"></span><b>${x.capteur.nom}</b></td><td>${x.verdict === "rouge" ? x.non[0] : (x.att[0] || (x.verdict === "vert" ? "Bon choix." : capFirst(x.notes[x.notes.length - 1] || "") + "."))}</td></tr>`).join("")}</table></div>`;
+
+  const box = $("#resultat");
+  box.className = "resultat " + v; box.innerHTML = h;
+  const bReco = $("#b-reco"); if (bReco) bReco.onclick = () => { $("#reco").classList.remove("cache"); bReco.remove(); };
+  $("#b-comp").onclick = () => $("#comp").classList.toggle("cache");
+  const bb = $("#b-brancher");
+  if (bb) bb.onclick = () => {
+    br.m = { capteur: c.id, carte: "pnp", logique: { presence: "presence", mesure: "mesure", precise: "mesure", securite: "securite" }[etat.besoin] };
+    mode("branch", true); window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  box.querySelectorAll("[data-fiche]").forEach(b => b.onclick = () => ouvrirFiche(+b.dataset.fiche));
+
+  if (etat.mode === "missions") {
+    if (!mis.essaye) { mis.resultats[mis.i] = v; mis.essaye = true; rendreMission(); }
+    $("#b-suiv").onclick = missionSuivante;
+  }
+  if (window.innerWidth <= 980) $(".droite").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* ---------- Missions ---------- */
+function melanger(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function demarrerMissions() {
+  mis.ordre = melanger(MISSIONS.map((_, i) => i)); mis.i = 0; mis.resultats = []; mis.essaye = false; mis.fini = false;
+  chargerMission();
+}
+function chargerMission() {
+  const m = MISSIONS[mis.ordre[mis.i]];
+  etat.mat = m.mat; etat.dist = m.dist; etat.env = m.env; etat.besoin = m.besoin; etat.cap = null; mis.essaye = false;
+  rendreMission(); changer();
+}
+function points() { return mis.resultats.reduce((t, v) => t + (v === "vert" ? 2 : v === "jaune" ? 1 : 0), 0); }
+function rendreMission() {
+  const carte = $("#carte-mission");
+  if (mis.fini) return;
+  const m = MISSIONS[mis.ordre[mis.i]];
+  const mat = matParId[m.mat], env = ENVIRONNEMENTS.find(e => e.id === m.env), bes = BESOINS.find(b => b.id === m.besoin);
+  const dl = DISTANCES.find(d => d.v === m.dist).label;
+  carte.innerHTML = `<div class="entete"><span class="prog">Mission ${mis.i + 1} / ${mis.ordre.length} · ${points()} pts</span>
+    <div class="pts">${mis.ordre.map((_, k) => `<span class="pt ${mis.resultats[k] || ""} ${k === mis.i ? "cur" : ""}"></span>`).join("")}</div></div>
+    <h2>${m.objet || mat.emoji} ${m.titre}</h2><p>${m.texte}</p>
+    <div class="tags"><span class="tag">${mat.emoji} ${mat.label}</span><span class="tag">📏 ${dl}</span><span class="tag">${env.emoji} ${env.label}</span><span class="tag">${bes.emoji} ${bes.label}</span></div>
+    <p style="font-size:14px;color:var(--muted);margin:10px 0 0">Bon choix = 2 points · pas optimal = 1 point · seul ton premier essai compte.</p>`;
+}
+function missionSuivante() {
+  if (mis.i + 1 < mis.ordre.length) { mis.i++; chargerMission(); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  else bilan();
+}
+function bilan() {
+  mis.fini = true;
+  const total = mis.ordre.length * 2, p = points();
+  const nv = mis.resultats.filter(v => v === "vert").length, nj = mis.resultats.filter(v => v === "jaune").length, nr = mis.resultats.filter(v => v === "rouge").length;
+  const msg = p / total >= .85 ? "Excellent! Tu choisis tes capteurs comme un pro." : p / total >= .6 ? "Bon travail! Relis les fiches des capteurs où tu as hésité." : "Continue! Revois les fiches, puis recommence les missions.";
+  $("#carte-mission").innerHTML = `<div class="bilan"><div class="prog" style="font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;color:var(--muted)">BILAN DES MISSIONS</div>
+   <div class="gros">${p} / ${total}</div><p>${msg}</p>
+   <p><span class="dot vert"></span>${nv} bons choix &nbsp; <span class="dot jaune"></span>${nj} pas optimaux &nbsp; <span class="dot rouge"></span>${nr} erreurs</p>
+   <table style="width:100%;text-align:left;font-size:14px;border-collapse:collapse">${mis.ordre.map((mi, k) => `<tr><td style="padding:4px;border-top:1px solid var(--line)"><span class="dot ${mis.resultats[k]}"></span>${MISSIONS[mi].titre}</td></tr>`).join("")}</table>
+   <button class="go" style="margin-top:14px" id="b-recommencer">↻ Recommencer les missions</button></div>`;
+  $("#b-recommencer").onclick = demarrerMissions;
+  $("#tester").disabled = true;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* ---------- Onglets, fiches ---------- */
+function mode(m, garder) {
+  etat.mode = m;
+  $("#tab-labo").setAttribute("aria-selected", m === "labo");
+  $("#tab-missions").setAttribute("aria-selected", m === "missions");
+  $("#tab-branch").setAttribute("aria-selected", m === "branch");
+  $("#vue-labo").classList.toggle("cache", m !== "labo");
+  $("#vue-missions").classList.toggle("cache", m !== "missions");
+  $("#vue-branch").classList.toggle("cache", m !== "branch");
+  $("#carte-capteurs").classList.toggle("cache", m === "branch");
+  $("#scene").classList.toggle("cache", m === "branch");
+  $("#board").classList.toggle("cache", m !== "branch");
+  $("#compteur").classList.toggle("cache", m === "branch");
+  $("#tester").innerHTML = "⚡ Tester la détection";
+  if (m === "branch") { if (garder) { br.sous = "libre"; brNouveauBranchement(); brTout(); } else { br.sous = "missions"; brDemarrer(); } return; }
+  $("#num-capteur").textContent = m === "labo" ? "5" : "?";
+  if (m === "missions") demarrerMissions();
+  else { etat.mat = null; etat.dist = null; etat.env = "propre"; etat.besoin = "presence"; etat.cap = null; changer(); }
+}
+function srcFiche(n) { return (window.FICHES_DATA && window.FICHES_DATA[n]) || `fiches/fiche${n}.jpg`; }
+function ouvrirFiche(n) {
+  const c = CAPTEURS.find(x => x.fiche === n);
+  $("#contenu-voile").innerHTML = `<img src="${srcFiche(n)}" alt="Fiche ${n} : ${c.nom}">`;
+  $("#voile").classList.add("ouvert");
+}
+function ouvrirGalerie() {
+  $("#contenu-voile").innerHTML = `<h2 style="color:var(--navy);margin:6px 4px">Les 9 fiches de capteurs</h2><div class="galerie">${CAPTEURS.map(c => `<button data-f="${c.fiche}"><img src="${srcFiche(c.fiche)}" alt="">Fiche ${c.fiche} · ${c.nom}</button>`).join("")}</div>`;
+  $("#contenu-voile").querySelectorAll("[data-f]").forEach(b => b.onclick = () => ouvrirFiche(+b.dataset.f));
+  $("#voile").classList.add("ouvert");
+}
+$("#fermer").onclick = () => $("#voile").classList.remove("ouvert");
+$("#voile").addEventListener("click", e => { if (e.target.id === "voile") $("#voile").classList.remove("ouvert"); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("#voile").classList.remove("ouvert"); });
+$("#tab-labo").onclick = () => mode("labo");
+$("#tab-missions").onclick = () => mode("missions");
+$("#tab-fiches").onclick = ouvrirGalerie;
+$("#tester").onclick = () => etat.mode === "branch" ? testerBranch() : tester();
+$("#tab-branch").onclick = () => mode("branch");
+$("#hasard").onclick = () => {
+  const p = a => a[Math.floor(Math.random() * a.length)];
+  etat.mat = p(MATERIAUX).id; etat.dist = p(DISTANCES).v; etat.env = p(ENVIRONNEMENTS).id;
+  etat.besoin = Math.random() < .7 ? "presence" : p(BESOINS).id; etat.cap = null; changer();
+};
+
+changer();
+</script>
+<script src="branchement-ui.js"></script>
+<script>
+/* Application installable */
+let installEvt = null;
+window.addEventListener("beforeinstallprompt", ev => { ev.preventDefault(); installEvt = ev; $("#bInstall").hidden = false; });
+window.addEventListener("appinstalled", () => { installEvt = null; $("#bInstall").hidden = true; });
+$("#bInstall").onclick = async () => { if (!installEvt) return; installEvt.prompt(); try { await installEvt.userChoice; } catch (_) {} installEvt = null; $("#bInstall").hidden = true; };
+try { if ("serviceWorker" in navigator && window.isSecureContext && !/claude\.ai|claudeusercontent/.test(location.host)) {
+  window.addEventListener("load", () => { try { navigator.serviceWorker.register("sw.js").catch(() => {}); } catch (_) {} });
+} } catch (_) {}
+$("#br-reset").onclick = () => { brNouveauBranchement(); brTout(); };
+</script>
+</body>
+</html>
