@@ -1,6 +1,6 @@
 // Service worker : l'application fonctionne sans Internet.
 // Les pages et le code sont d'abord demandés au réseau (pour recevoir les mises à jour), sinon la copie en cache est utilisée.
-const CACHE = 'capteurs-v1';
+const CACHE = 'capteurs-v1.1';
 const FILES = [
   './',
   './index.html',

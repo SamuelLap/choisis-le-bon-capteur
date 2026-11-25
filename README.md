@@ -16,4 +16,9 @@ Jeu pédagogique sur les capteurs industriels pour la formation professionnelle 
 
 ## Mettre à jour
 
-Remplacer les fichiers dans le dépôt, puis changer le numéro `capteurs-v1` dans `sw.js` (v2, v3…). Les appareils reçoivent la nouvelle version à la prochaine ouverture avec Internet.
+1. Remplacer les fichiers dans le dépôt.
+2. Changer le numéro de version et la date au bas de `index.html` (ligne `Version …`).
+3. Changer le même numéro dans `sw.js` (`capteurs-v1.1` → `capteurs-v1.2`, etc.).
+4. Noter les changements dans `CHANGELOG.md`.
+
+Les appareils reçoivent la nouvelle version à la prochaine ouverture avec Internet.
