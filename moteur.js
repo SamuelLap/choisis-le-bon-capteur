@@ -322,7 +322,7 @@ const MISSIONS = [
   { titre: "Niveau d'une cuve", texte: "On veut connaître en continu la hauteur de l'eau dans une cuve ouverte. Le capteur est à 1,5 m au-dessus du fond.", mat: "liquide", dist: 1500, env: "propre", besoin: "mesure" },
   { titre: "Trémie de granules", texte: "Dans une usine de plastique, on veut savoir quand la trémie de granules est pleine, à travers sa paroi (15 mm). L'air est poussiéreux.", mat: "granules", dist: 15, env: "poussiere", besoin: "presence" },
   { titre: "Pièces d'aluminium", texte: "Des petites pièces d'aluminium passent à 15 mm de la face du capteur.", mat: "alu", objet: "🔘", dist: 15, env: "propre", besoin: "presence" },
-  { titre: "Coussins de mousse", texte: "Une usine de meubles fait passer des coussins de mousse sur un convoyeur de 60 cm de large.", mat: "mousse", dist: 600, env: "propre", besoin: "presence" },
+  { titre: "Coussins de mousse", texte: "Dans une usine de meubles, des coussins de mousse circulent sur un convoyeur de 60 cm de large.", mat: "mousse", dist: 600, env: "propre", besoin: "presence" },
   { titre: "Scierie", texte: "Des planches de bois passent sur un convoyeur de 3 m de large. Le bran de scie vole partout.", mat: "bois", dist: 3000, env: "poussiere", besoin: "presence" },
   { titre: "Bouteilles de plastique", texte: "Des bouteilles de plastique remplies d'eau passent à 15 mm de la face du capteur.", mat: "plastique", dist: 15, env: "propre", besoin: "presence" },
 ];
