@@ -88,7 +88,7 @@ const CAPTEURS = [
     mat: {
       acier: ["oui"], alu: ["oui"], bois: ["oui"], carton: ["oui"], plastique: ["oui"], noir: ["oui"],
       verre: ["non", "Le faisceau traverse le verre transparent : il n'est presque pas coupé, donc rien n'est détecté."],
-      liquide: ["non", "On ne fait pas passer un faisceau à travers un réservoir fermé pour lire un niveau."],
+      liquide: ["non", "Un faisceau ne sert pas à lire un niveau à travers un réservoir fermé."],
       granules: ["att", "Possible en travers de la trémie, mais il faut percer deux ouvertures et garder les lentilles propres."],
       aimant: ["non", VERIN],
       mousse: ["oui"], papier: ["oui"],
